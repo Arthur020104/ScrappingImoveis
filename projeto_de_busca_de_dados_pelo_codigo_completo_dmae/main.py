@@ -1,5 +1,5 @@
 import pandas as pd
-from data import get_info_by_complete_property_code
+from .data import get_info_by_complete_property_code
 import threading
 import time
 import tqdm
@@ -54,6 +54,10 @@ def process_chunks(file_path: str, save_number: int, concurrent_chunks: int):
     all_results = []
     latest_chunk_index = 0
     progress_bar = tqdm.tqdm(range(len(chunks)), desc="Progress", unit="chunks")
+    
+    # Obtém o diretório do script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
     try:
         # Processa os chunks em grupos de concurrent_chunks
         for i in range(0, len(chunks), concurrent_chunks):
@@ -76,12 +80,12 @@ def process_chunks(file_path: str, save_number: int, concurrent_chunks: int):
             # Salva os resultados em um arquivo CSV após cada grupo de chunks
             value = 0 if i == 0 else int(i / concurrent_chunks)
             
-            csv_filename = f'output_{value}.csv'
-            excel_filename = f'output_{value}.xlsx'
+            csv_filename = os.path.join(script_dir, f'output_{value}.csv')
+            excel_filename = os.path.join(script_dir, f'output_{value}.xlsx')
             
             df = pd.DataFrame(all_results)
             df.to_csv(csv_filename, index=False)
-            df.to_excel(excel_filename, index=False)
+           # df.to_excel(excel_filename, index=False)
             
             print(f"CSV file created: {csv_filename}")
             #print(f"Excel file created: {excel_filename}")
@@ -95,7 +99,8 @@ def process_chunks(file_path: str, save_number: int, concurrent_chunks: int):
         print(f"An error occurred: {e}")
         #print(f"{100 * '*'}\nProcessing the remaining chunks...")
         df = pd.DataFrame(all_results)
-        df.to_csv('combined_output.csv', index=False)
+        combined_output_path = os.path.join(script_dir, 'combined_output.csv')
+        df.to_csv(combined_output_path, index=False)
         print(f"CSV file created.\n{100 * '*'}")
         return
 
@@ -104,7 +109,7 @@ def process_chunks(file_path: str, save_number: int, concurrent_chunks: int):
         i += concurrent_chunks
         value = 0 if i == 0 else int(i / concurrent_chunks)
             
-        csv_filename = f'output_{value}.csv'
+        csv_filename = os.path.join(script_dir, f'output_{value}.csv')
         
         df = pd.DataFrame(all_results)
         df.to_csv(csv_filename, index=False)
@@ -118,7 +123,7 @@ def process_chunks(file_path: str, save_number: int, concurrent_chunks: int):
     combined_df = pd.DataFrame()  # Cria um DataFrame vazio para combinar os resultados
     time.sleep(2)
 
-    files = [f"output_{i}.csv" for i in range(0, latest_chunk_index + 1)]
+    files = [os.path.join(script_dir, f"output_{i}.csv") for i in range(0, latest_chunk_index + 1)]
     for file in files:
         # Lê o arquivo CSV em um DataFrame
         try:
@@ -133,12 +138,13 @@ def process_chunks(file_path: str, save_number: int, concurrent_chunks: int):
         os.remove(file)
 
     # Escreve o DataFrame combinado em um novo arquivo CSV
-    combined_df.to_csv('combined_output.csv', index=False)
+    combined_output_path = os.path.join(script_dir, 'combined_output.csv')
+    combined_df.to_csv(combined_output_path, index=False)
     print(f"CSV file created.\n{100 * '*'}")
-    print("Combined CSV file created: combined_output.csv")
+    print(f"Combined CSV file created: {combined_output_path}")
     time_taken = time.time() - start_time
     print(f"Time taken: {time_taken:.2f} seconds")
-    return os.path.abspath('combined_output.csv')
+    return os.path.abspath(combined_output_path)
 
 if __name__ == '__main__':
     process_chunks('C:/Users/arthu/OneDrive/Desktop/Repo/projeto_de_busca_de_dados_pelo_codigo_completo_dmae/combined_output.csv', 1000, 60)
