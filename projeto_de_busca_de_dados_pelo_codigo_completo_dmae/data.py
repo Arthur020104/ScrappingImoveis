@@ -11,7 +11,7 @@ import random
 import pandas as pd
 from datetime import datetime
 import os
-from info import guardar_info
+from .info import guardar_info
 
 def configure_chrome_options():
     """
