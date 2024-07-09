@@ -1,21 +1,20 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog
 import threading
-import pandas as pd
 import os
 from helper.prefeitura import request_new_prefeitura_data
 from helper.dmae import request_new_dmae_data
-from tkinter import filedialog
-
-class GitHubLikeInterface:
+from PIL import Image, ImageTk
+class Interface:
     def __init__(self, root):
         self.root = root
-        self.root.title("GitHub-like Interface")
+        self.root.title("Interface")
         self.root.geometry("800x600")
         self.root.configure(bg='#444444')
 
         self.setup_styles()
         self.create_widgets()
+
 
     def setup_styles(self):
         style = ttk.Style()
@@ -63,8 +62,8 @@ class GitHubLikeInterface:
         self.tab2 = ttk.Frame(notebook, style='TFrame')
         self.tab3 = ttk.Frame(notebook, style='TFrame')
 
-        notebook.add(self.tab1, text='Aba 1 Prefeitura')
-        notebook.add(self.tab2, text='Aba 2 Dmae')
+        notebook.add(self.tab1, text='PREFEITURA')
+        notebook.add(self.tab2, text='DMAE')
         notebook.add(self.tab3, text='Aba 3')
 
         self.setup_tab1()
@@ -72,7 +71,7 @@ class GitHubLikeInterface:
         self.setup_tab3()
 
     def setup_tab1(self):
-        title1 = ttk.Label(self.tab1, text="Interface GitHub-like - Aba 1 Prefeitura", font=('Arial', 24))
+        title1 = ttk.Label(self.tab1, text="Interface - Prefeitura", font=('Arial', 24))
         title1.pack(pady=10)
 
         self.entry_start_code_pref = ttk.Entry(self.tab1)
@@ -106,7 +105,7 @@ class GitHubLikeInterface:
         self.button_pref.pack(pady=20)
 
     def setup_tab2(self):
-        title2 = ttk.Label(self.tab2, text="Interface GitHub-like - Aba 2 Dmae", font=('Arial', 24))
+        title2 = ttk.Label(self.tab2, text="Interface - Dmae", font=('Arial', 24))
         title2.pack(pady=10)
 
         self.entry_start_code_dmae = ttk.Entry(self.tab2)
@@ -173,7 +172,7 @@ class GitHubLikeInterface:
             self.entry_base_path_dmae.config(state='disabled')
 
     def setup_tab3(self):
-        title3 = ttk.Label(self.tab3, text="Interface GitHub-like - Aba 3", font=('Arial', 24))
+        title3 = ttk.Label(self.tab3, text="Interface - 3", font=('Arial', 24))
         title3.pack(pady=10)
         button3 = ttk.Button(self.tab3, text="Pressione-me na Aba 3", command=lambda: self.on_button_click(2))
         button3.pack(pady=20)
@@ -243,7 +242,16 @@ def check_if_exist(destination):
         os.remove(destination)
 if __name__ == '__main__':
     root = tk.Tk()
-    app = GitHubLikeInterface(root)
+    
+    # Load the high-resolution PNG image
+    img = Image.open("letter-g.png")
+    photo = ImageTk.PhotoImage(img)
+
+    # Set the icon for the window and the taskbar
+    root.iconphoto(True, photo)
+
+    app = Interface(root)
     app.toggle_base_path_entry_dmae()
     app.toggle_base_path_entry_pref()
+    
     root.mainloop()
