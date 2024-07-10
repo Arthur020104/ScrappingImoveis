@@ -4,6 +4,7 @@ import threading
 import os
 from helper.prefeitura import request_new_prefeitura_data
 from helper.dmae import request_new_dmae_data
+from helper.territorial import request_new_pdf_data
 from PIL import Image, ImageTk
 class Interface:
     def __init__(self, root):
@@ -64,7 +65,7 @@ class Interface:
 
         notebook.add(self.tab1, text='PREFEITURA')
         notebook.add(self.tab2, text='DMAE')
-        notebook.add(self.tab3, text='Aba 3')
+        notebook.add(self.tab3, text='TERRITORIAL')
 
         self.setup_tab1()
         self.setup_tab2()
@@ -170,14 +171,47 @@ class Interface:
             self.entry_base_path_dmae.delete(0, tk.END)
             self.entry_base_path_dmae.insert(0, directory)
             self.entry_base_path_dmae.config(state='disabled')
-
+    def browse_directory_pdf(self):
+        directory = filedialog.askdirectory()
+        if directory:
+            self.entry_base_path_pdf.config(state='normal')
+            self.entry_base_path_pdf.delete(0, tk.END)
+            self.entry_base_path_pdf.insert(0, directory)
+            self.entry_base_path_pdf.config(state='disabled')
     def setup_tab3(self):
-        title3 = ttk.Label(self.tab3, text="Interface - 3", font=('Arial', 24))
+        title3 = ttk.Label(self.tab3, text="Interface - PDF", font=('Arial', 24))
         title3.pack(pady=10)
-        button3 = ttk.Button(self.tab3, text="Pressione-me na Aba 3", command=lambda: self.on_button_click(2))
-        button3.pack(pady=20)
-        self.label3 = ttk.Label(self.tab3, text="Aguardando...")
-        self.label3.pack(pady=20)
+
+        self.entry_start_code_pdf = ttk.Entry(self.tab3)
+        self.entry_start_code_pdf.pack(pady=5)
+        self.entry_start_code_pdf.insert(0, "Código Inicial")
+
+        self.entry_end_code_pdf = ttk.Entry(self.tab3)
+        self.entry_end_code_pdf.pack(pady=5)
+        self.entry_end_code_pdf.insert(0, "Código Final")
+
+        self.entry_records_per_chunk_pdf = ttk.Entry(self.tab3)
+        self.entry_records_per_chunk_pdf.pack(pady=5)
+        self.entry_records_per_chunk_pdf.insert(0, "Registros por Lote")
+
+        self.entry_concurrent_chunks_pdf = ttk.Entry(self.tab3)
+        self.entry_concurrent_chunks_pdf.pack(pady=5)
+        self.entry_concurrent_chunks_pdf.insert(0, "Lotes Concorrentes")
+
+        self.update_base_var_pdf = tk.BooleanVar()
+        self.update_base_checkbutton_pdf = ttk.Checkbutton(self.tab3, text="Atualizar base de dados", variable=self.update_base_var_pdf, command=self.toggle_base_path_entry_pdf)
+        self.update_base_checkbutton_pdf.pack(pady=10)
+
+        self.entry_base_path_pdf = ttk.Entry(self.tab3, state='disabled')
+        self.entry_base_path_pdf.insert(0, "Caminho personalizado para a base de dados")
+    
+        
+        self.button_browse_pdf = ttk.Button(self.tab3, text="Selecionar Pasta", command=self.browse_directory_pdf)
+        self.button_browse_pdf.pack(pady=5)
+
+        self.toggle_base_path_entry_pdf()
+        self.button_pdf = ttk.Button(self.tab3, text="Processar Dados do PDF", command=self.threaded_request_data_from_pdf)
+        self.button_pdf.pack(pady=20)
 
     def on_button_click(self, id):
         if id == 0:
@@ -188,7 +222,13 @@ class Interface:
             #print("Botão pressionado!")
         elif id == 2:
             self.label3.config(text="Botão pressionado!")
-    
+    def toggle_base_path_entry_pdf(self):
+        if self.update_base_var_pdf.get():
+            self.entry_base_path_pdf.pack_forget()
+            self.button_browse_pdf.pack_forget()
+        else:
+            self.entry_base_path_pdf.pack(pady=5)
+            self.button_browse_pdf.pack(pady=5)
     def request_data_from_prefeitura(self):
         try:
             start_code = int(self.entry_start_code_pref.get())
@@ -231,7 +271,30 @@ class Interface:
                 print(f"Dados do DMAE processados e salvos em {base_path_dmae}")
         except Exception as e:
             print(f"Erro: {e}")
-
+    def request_data_from_pdf(self):
+        try:
+            start_code = int(self.entry_start_code_pdf.get())
+            end_code = int(self.entry_end_code_pdf.get())
+            records_per_chunk = int(self.entry_records_per_chunk_pdf.get())
+            concurrent_chunks = int(self.entry_concurrent_chunks_pdf.get())
+            if self.update_base_var_pdf.get():
+                request_new_pdf_data(start_code, end_code, records_per_chunk, concurrent_chunks)
+                print("Dados do PDF processados e base atualizada com sucesso!")
+            else:
+                base_path_pdf = self.entry_base_path_pdf.get()
+                new_file = request_new_pdf_data(start_code, end_code, records_per_chunk, concurrent_chunks,False)
+                #movendo o arquivo para o path desejado
+                #1 pegar o nome do arquivo
+                name_file = 'PDF' + os.path.basename(new_file)
+                #2 mover o arquivo
+                new_path = os.path.join(base_path_pdf, name_file)
+                check_if_exist(new_path)
+                os.rename(new_file, new_path)
+                print(f"Dados do PDF processados e salvos em {base_path_pdf}")
+        except Exception as e:
+            print(f"Erro: {e}")
+    def threaded_request_data_from_pdf(self):
+        threading.Thread(target=self.request_data_from_pdf).start()
     def threaded_request_data_from_prefeitura(self):
         threading.Thread(target=self.request_data_from_prefeitura).start()
 
@@ -243,11 +306,9 @@ def check_if_exist(destination):
 if __name__ == '__main__':
     root = tk.Tk()
     
-    # Load the high-resolution PNG image
     img = Image.open("letter-g.png")
     photo = ImageTk.PhotoImage(img)
 
-    # Set the icon for the window and the taskbar
     root.iconphoto(True, photo)
 
     app = Interface(root)
