@@ -214,7 +214,7 @@ def merge_and_save_intermediate_dataframe(combined_df, df_original, cycle):
     print(f"Final combined CSV file for cycle {cycle} created: temp/Final_Combined_cycle{cycle}.csv")
 
 
-def process_chunk_pdf(csv_filepath, concurrent_threads):
+def process_chunk_pdf(csv_filepath:str, concurrent_threads:int):
     """
     Função que coordena a execução de todas as etapas do processamento de chunks de PDFs.
 
