@@ -4,7 +4,9 @@ from .prefeitura import request_new_prefeitura_data
 from projeto_de_busca_de_dados_pelo_codigo_completo_dmae.main import process_chunks as process_dmae_chunks
 
 script_dir = os.path.dirname(__file__)
-
+arr_keys = ['Insc_Cadastral', 'Imovel_Endereco', 'Bairro', 'Quadra', 'Lote', 'Area Territorial',
+                        'Area Predial', 'Testada', 'Cod_Prefeitura', 'Contribuinte_CPF', 'Contribuinte_Nome',
+                        'Contribuinte_Endereco', 'Contribuinte_CEP', 'Bairro_Contribuinte']
 def request_new_dmae_data(start_code: int, end_code: int, records_per_chunk: int, concurrent_chunks: int, delete_file=True):
     """
     Processa e compara dados novos com dados existentes, atualizando e 
@@ -42,21 +44,9 @@ def request_new_dmae_data(start_code: int, end_code: int, records_per_chunk: int
             if mask.any():
                 current_row = concatenated_df.loc[mask].iloc[0]
                 if any(
-                    current_row[col] != row[col] for col in [
-                        'Insc_Cadastral', 'Imovel_Endereco', 'Bairro', 'Quadra', 'Lote', 'Area Territorial',
-                        'Area Predial', 'Testada', 'Cod_Prefeitura', 'Contribuinte_CPF', 'Contribuinte_Nome',
-                        'Contribuinte_Endereco', 'Contribuinte_CEP', 'Bairro_Contribuinte'
-                    ]
+                    current_row[col] != row[col] for col in arr_keys
                 ):
-                    concatenated_df.loc[mask, [
-                        'Insc_Cadastral', 'Imovel_Endereco', 'Bairro', 'Quadra', 'Lote', 'Area Territorial',
-                        'Area Predial', 'Testada', 'Cod_Prefeitura', 'Contribuinte_CPF', 'Contribuinte_Nome',
-                        'Contribuinte_Endereco', 'Contribuinte_CEP', 'Bairro_Contribuinte'
-                    ]] = row[
-                        ['Insc_Cadastral', 'Imovel_Endereco', 'Bairro', 'Quadra', 'Lote', 'Area Territorial',
-                        'Area Predial', 'Testada', 'Cod_Prefeitura', 'Contribuinte_CPF', 'Contribuinte_Nome',
-                        'Contribuinte_Endereco', 'Contribuinte_CEP', 'Bairro_Contribuinte']
-                    ].values
+                    concatenated_df.loc[mask, arr_keys] = row[arr_keys].values
 
         # Salva o DataFrame atualizado de volta no arquivo CSV
         concatenated_df.to_csv(current_data_path, index=False)
