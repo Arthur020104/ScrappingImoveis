@@ -2,7 +2,7 @@ import os
 import time
 import urllib3
 import shutil
-from helper import deleteFilesInFolderAndFolder
+from .helper_pdf import deleteFilesInFolderAndFolder
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -11,7 +11,7 @@ from selenium.common.exceptions import TimeoutException, WebDriverException, NoS
 from selenium.webdriver.firefox.service import Service
 import geckodriver_autoinstaller
 import random
-from infoExtract import extract_info, read_pdf
+from .infoExtract import extract_info, read_pdf
 
 # Suppress warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

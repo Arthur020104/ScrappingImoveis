@@ -1,11 +1,11 @@
 import pandas as pd
-from download import download_pdf  # Supondo que você tenha um módulo chamado download
-from infoExtract import read_pdf, extract_info  # Supondo que você tenha esses módulos
+from .download import download_pdf  # Supondo que você tenha um módulo chamado download
+from .infoExtract import read_pdf, extract_info  # Supondo que você tenha esses módulos
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 import os
 import time
-from helper import clear_temp_folders
+from .helper_pdf import clear_temp_folders
 
 
 def initialize_directories():
