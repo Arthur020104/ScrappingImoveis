@@ -1,5 +1,5 @@
 import streamlit as st
-from main import process_chunks as process_file
+from .main import process_chunks as process_file
 import os
 
 def main():

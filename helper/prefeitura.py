@@ -25,14 +25,14 @@ def request_new_prefeitura_data(start_code: int, end_code: int, records_per_chun
         new_data = pd.read_csv(new_file)
         
         # Limpeza dos novos dados
-        print(f'\n\n{new_data}\n\n')
+        #print(f'\n\n{new_data}\n\n')
         new_data['codigo'] = new_data['codigo'].astype(str)
         new_data['codigo_reduzido'] = new_data['codigo_reduzido'].astype(str)
         new_data['endereco'] = new_data['endereco'].astype(str)
         new_data['codigo_completo'] = new_data['codigo_completo'].astype(str)
         new_data.drop_duplicates(subset=['codigo'], inplace=True)
         new_data.dropna(subset=['codigo'], inplace=True)
-        print(f'\n\n{new_data}\n\n')
+        #print(f'\n\n{new_data}\n\n')
 
         # Lê os dados atuais do arquivo CSV existente
         current_data = pd.read_csv(os.path.join(script_dir, '..', 'BaseDeDados', 'CodigosCompletos', 'Base.csv'))
