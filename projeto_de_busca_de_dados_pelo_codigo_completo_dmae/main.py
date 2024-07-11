@@ -131,7 +131,10 @@ def process_chunks(file_path: str, save_number: int, concurrent_chunks: int):
         except pd.errors.EmptyDataError:
             #print(f"File {file} is empty.")
             os.remove(file)
-            break
+            continue
+        except:
+            os.remove(file)
+            continue
         
         # Adiciona o DataFrame ao DataFrame combinado
         combined_df = pd.concat([combined_df, df], ignore_index=True)
