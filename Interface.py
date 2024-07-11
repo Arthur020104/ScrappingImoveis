@@ -179,7 +179,7 @@ class Interface:
             self.entry_base_path_pdf.insert(0, directory)
             self.entry_base_path_pdf.config(state='disabled')
     def setup_tab3(self):
-        title3 = ttk.Label(self.tab3, text="Interface - PDF", font=('Arial', 24))
+        title3 = ttk.Label(self.tab3, text="Interface - AREA TERRITORIAL", font=('Arial', 24))
         title3.pack(pady=10)
 
         self.entry_start_code_pdf = ttk.Entry(self.tab3)
@@ -210,7 +210,7 @@ class Interface:
         self.button_browse_pdf.pack(pady=5)
 
         self.toggle_base_path_entry_pdf()
-        self.button_pdf = ttk.Button(self.tab3, text="Processar Dados do PDF", command=self.threaded_request_data_from_pdf)
+        self.button_pdf = ttk.Button(self.tab3, text="Processar Dados de Area territorial", command=self.threaded_request_data_from_pdf)
         self.button_pdf.pack(pady=20)
 
     def on_button_click(self, id):
