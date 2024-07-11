@@ -63,10 +63,10 @@ def extract_info(input_str):
         cep = cep_match.group(1).replace("-", "").replace(".", "")  # Remove hyphen and dot from CEP
         extracted_info["CEPImovel"] = str(cep)
     if area_territorial_match:
-        extracted_info["Area Territorial"] = str(area_territorial_match.group(1))
+        extracted_info["AreaTerritorial"] = str(area_territorial_match.group(1))
     if testada_match:
-        extracted_info["Testada"] = str(testada_match.group(1))
+        extracted_info["Testada_y"] = str(testada_match.group(1))
     if area_predial_match:
-        extracted_info["Area Predial"] = str(area_predial_match.group(1))
+        extracted_info["AreaPredial"] = str(area_predial_match.group(1))
 
     return extracted_info
