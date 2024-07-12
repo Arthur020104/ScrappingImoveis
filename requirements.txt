@@ -1,0 +1,10 @@
+pandas
+selenium
+tqdm
+webdriver-manager
+chromedriver-autoinstaller
+streamlit
+geckodriver-autoinstaller
+PyPDF2
+pillow
+pyinstaller
