@@ -24,7 +24,9 @@ def request_new_dmae_data(start_code: int, end_code: int, records_per_chunk: int
     """
     try:
         # Processa e obtém os novos dados da prefeitura e do DMAE
-        new_file_pref_cod = request_new_prefeitura_data(start_code=start_code, end_code=end_code, records_per_chunk=records_per_chunk, concurrent_chunks=concurrent_chunks, delete_file=False)
+        new_file_pref_cod, status = request_new_prefeitura_data(start_code=start_code, end_code=end_code, records_per_chunk=records_per_chunk, concurrent_chunks=concurrent_chunks, delete_file=False)
+        if not new_file_pref_cod:
+            return None, status
         new_file = process_dmae_chunks(file_path=new_file_pref_cod, save_number=records_per_chunk, concurrent_chunks=concurrent_chunks)
         new_data = pd.read_csv(new_file)
         
@@ -55,9 +57,11 @@ def request_new_dmae_data(start_code: int, end_code: int, records_per_chunk: int
             os.remove(new_file)
             return None
         else:
-            return new_file
+            return new_file, f"Dados processado e salvos em "
     except Exception as e:
-        print(f"Erro ao processar os dados: {e}")
+        print(f"Erro ao processar os dados do Dmae: {e}")
+        return None, f"Erro ao processar os dados do Dmae: {e}"
+        
 
 if __name__ == '__main__':
-    request_new_dmae_data(start_code=1, end_code=130, records_per_chunk=50, concurrent_chunks=5)
+    request_new_dmae_data(start_code=1, end_code=130, records_per_chunk=50, concurrent_chunks=5, delete_file=False)

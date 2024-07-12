@@ -59,9 +59,10 @@ def request_new_prefeitura_data(start_code: int, end_code: int, records_per_chun
             os.remove(new_file)
             return None
         else:
-            return new_file
+            return new_file, f"Dados processado e salvos em "
 
     except Exception as e:
+        return None, f"Erro ao processar os dados da prefeitura: {e}"
         print(f"Erro ao processar os dados: {e}")
         return None
 

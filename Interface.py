@@ -100,10 +100,15 @@ class Interface:
         
         self.button_browse_pref = ttk.Button(self.tab1, text="Selecionar Pasta", command=self.browse_directory_pref)
         self.button_browse_pref.pack(pady=5)
-
-        self.toggle_base_path_entry_pref()
+        
+        self.status_prefeitura = tk.StringVar()
+        self.status_prefeitura.set("Status: ")
+        self.status_label_prefeitura = ttk.Label(self.tab1, textvariable=self.status_prefeitura, font=('Arial', 10))
+        self.status_label_prefeitura.pack(pady=10)
+        
         self.button_pref = ttk.Button(self.tab1, text="Processar Dados da Prefeitura", command=self.threaded_request_data_from_prefeitura)
         self.button_pref.pack(pady=20)
+        self.toggle_base_path_entry_pref()
 
     def setup_tab2(self):
         title2 = ttk.Label(self.tab2, text="Interface - Dmae", font=('Arial', 24))
@@ -125,10 +130,16 @@ class Interface:
         self.entry_concurrent_chunks_dmae.pack(pady=5)
         self.entry_concurrent_chunks_dmae.insert(0, "Lotes Concorrentes")
 
+        self.status_text_dmae = tk.StringVar()
+        self.status_text_dmae.set("Status: ")
+        self.status_label_dmae = ttk.Label(self.tab2, textvariable=self.status_text_dmae, font=('Arial', 10))
+        self.status_label_dmae.pack(pady=10)
+        
         self.update_base_var_dmae = tk.BooleanVar()
         self.update_base_checkbutton_dmae = ttk.Checkbutton(self.tab2, text="Atualizar base de dados", variable=self.update_base_var_dmae, command=self.toggle_base_path_entry_dmae)
         self.update_base_checkbutton_dmae.pack(pady=10)
-
+        
+        
         self.entry_base_path_dmae = ttk.Entry(self.tab2, state='disabled')
         self.entry_base_path_dmae.insert(0, "Caminho personalizado para a base de dados")
     
@@ -136,25 +147,41 @@ class Interface:
         self.button_browse_dmae = ttk.Button(self.tab2, text="Selecionar Pasta", command=self.browse_directory_dmae)
         self.button_browse_dmae.pack(pady=5)
 
-        self.toggle_base_path_entry_dmae()
         self.button_dmae = ttk.Button(self.tab2, text="Processar Dados do DMAE", command=self.threaded_request_data_from_dmae)
         self.button_dmae.pack(pady=20)
+        self.toggle_base_path_entry_dmae()
 
     def toggle_base_path_entry_pref(self):
         if self.update_base_var_pref.get():
+            self.button_pref.pack_forget()
+            self.status_label_prefeitura.pack_forget()
             self.entry_base_path_pref.pack_forget()
             self.button_browse_pref.pack_forget()
+            self.button_pref.pack(pady=5)
+            self.status_label_prefeitura.pack(pady=10)
         else:
-            self.entry_base_path_pref.pack(pady=5)
+            self.button_pref.pack_forget()
+            self.status_label_prefeitura.pack_forget()
             self.button_browse_pref.pack(pady=5)
+            self.entry_base_path_pref.pack(pady=5)
+            self.button_pref.pack(pady=5)
+            self.status_label_prefeitura.pack(pady=10)
 
     def toggle_base_path_entry_dmae(self):
         if self.update_base_var_dmae.get():
+            self.button_dmae.pack_forget()
+            self.status_label_dmae.pack_forget()
             self.entry_base_path_dmae.pack_forget()
             self.button_browse_dmae.pack_forget()
+            self.button_dmae.pack(pady=5)
+            self.status_label_dmae.pack(pady=10)
         else:
+            self.button_dmae.pack_forget()
+            self.status_label_dmae.pack_forget()
             self.entry_base_path_dmae.pack(pady=5)
             self.button_browse_dmae.pack(pady=5)
+            self.button_dmae.pack(pady=5)
+            self.status_label_dmae.pack(pady=10)
 
     def browse_directory_pref(self):
         directory = filedialog.askdirectory()
@@ -209,26 +236,29 @@ class Interface:
         self.button_browse_pdf = ttk.Button(self.tab3, text="Selecionar Pasta", command=self.browse_directory_pdf)
         self.button_browse_pdf.pack(pady=5)
 
-        self.toggle_base_path_entry_pdf()
+        self.status_text_territorial = tk.StringVar()
+        self.status_text_territorial.set("Status: ")
+        self.status_label_territorial = ttk.Label(self.tab3, textvariable=self.status_text_territorial, font=('Arial', 10))
+        self.status_label_territorial.pack(pady=10)
+        
         self.button_pdf = ttk.Button(self.tab3, text="Processar Dados de Area territorial", command=self.threaded_request_data_from_pdf)
         self.button_pdf.pack(pady=20)
-
-    def on_button_click(self, id):
-        if id == 0:
-            pass
-            #print("Botão pressionado!")
-        elif id == 1:
-            pass
-            #print("Botão pressionado!")
-        elif id == 2:
-            self.label3.config(text="Botão pressionado!")
+        self.toggle_base_path_entry_pdf()
     def toggle_base_path_entry_pdf(self):
         if self.update_base_var_pdf.get():
+            self.button_pdf.pack_forget()
+            self.status_label_territorial.pack_forget()
             self.entry_base_path_pdf.pack_forget()
             self.button_browse_pdf.pack_forget()
+            self.button_pdf.pack(pady=5)
+            self.status_label_territorial.pack(pady=10)
         else:
-            self.entry_base_path_pdf.pack(pady=5)
+            self.button_pdf.pack_forget()
+            self.status_label_territorial.pack_forget()
             self.button_browse_pdf.pack(pady=5)
+            self.entry_base_path_pdf.pack(pady=5)
+            self.button_pdf.pack(pady=5)
+            self.status_label_territorial.pack(pady=10)
     def request_data_from_prefeitura(self):
         try:
             start_code = int(self.entry_start_code_pref.get())
@@ -237,17 +267,21 @@ class Interface:
             concurrent_chunks = int(self.entry_concurrent_chunks_pref.get())
             if self.update_base_var_pref.get():
                 request_new_prefeitura_data(start_code, end_code, records_per_chunk, concurrent_chunks,True)
-                print("Dados da Prefeitura processados e base atualizada com sucesso!")
+                self.status_prefeitura.set("Status: Dados da Prefeitura processados e base atualizada com sucesso!")
             else:
                 base_path = self.entry_base_path_pref.get()
-                new_file = request_new_prefeitura_data(start_code, end_code, records_per_chunk, concurrent_chunks,False)
+                new_file, status = request_new_prefeitura_data(start_code, end_code, records_per_chunk, concurrent_chunks,False)
+                if not new_file:
+                    self.status_prefeitura.set(f"Status: {status}")
                 name_file = 'prefeitura' + os.path.basename(new_file)
                 new_path = os.path.join(base_path, name_file)
                 check_if_exist(new_path)
                 os.rename(new_file, new_path)
-                print(f"Dados da Prefeitura processados e salvos em {base_path}")
+                result = f"Dados da Prefeitura processados e salvos em {base_path}"
+                self.status_prefeitura.set(f"Status: {result}")
         except Exception as e:
-            print(f"Erro: {e}")
+            result = f"Erro: {e}"
+            self.status_prefeitura.set(f"Status: {result}")
 
     def request_data_from_dmae(self):
         try:
@@ -257,10 +291,16 @@ class Interface:
             concurrent_chunks = int(self.entry_concurrent_chunks_dmae.get())
             if self.update_base_var_dmae.get():
                 request_new_dmae_data(start_code, end_code, records_per_chunk, concurrent_chunks)
-                print("Dados do DMAE processados e base atualizada com sucesso!")
+                result = "Dados do DMAE processados e base atualizada com sucesso!"
+                self.status_text_dmae.set(f"Status: {result}")
+                print(result)
             else:
                 base_path_dmae = self.entry_base_path_dmae.get()
-                new_file = request_new_dmae_data(start_code, end_code, records_per_chunk, concurrent_chunks,False)
+                new_file, status = request_new_dmae_data(start_code, end_code, records_per_chunk, concurrent_chunks,False)
+                if not new_file:
+                    #atualiza o textfield de status com a mensagem de erro
+                    self.status_text_dmae.set(f"Status: {status}")
+                    return
                 #movendo o arquivo para o path desejado
                 #1 pegar o nome do arquivo
                 name_file = 'dmae' + os.path.basename(new_file)
@@ -268,9 +308,16 @@ class Interface:
                 new_path = os.path.join(base_path_dmae, name_file)
                 check_if_exist(new_path)
                 os.rename(new_file, new_path)
-                print(f"Dados do DMAE processados e salvos em {base_path_dmae}")
+                result = f"Dados do DMAE processados e salvos em {base_path_dmae}"
+                print(result)
+                self.status_text_dmae.set(f"Status: {result}")
+                #Atualiza o textfield de status com a mensagem de sucesso
         except Exception as e:
-            print(f"Erro: {e}")
+            result = f"Erro processando os dados do DMAE: {e}"
+            print(result)
+            self.status_text_dmae.set(f"Status: {result}")
+            #atualiza o textfield de status com a mensagem de erro
+            return
     def request_data_from_pdf(self):
         try:
             start_code = int(self.entry_start_code_pdf.get())
@@ -279,10 +326,13 @@ class Interface:
             concurrent_chunks = int(self.entry_concurrent_chunks_pdf.get())
             if self.update_base_var_pdf.get():
                 request_new_pdf_data(start_code, end_code, records_per_chunk, concurrent_chunks)
-                print("Dados do PDF processados e base atualizada com sucesso!")
+                self.status_text_territorial.set("Status: Dados do PDF processados e base atualizada com sucesso!")
             else:
                 base_path_pdf = self.entry_base_path_pdf.get()
-                new_file = request_new_pdf_data(start_code, end_code, records_per_chunk, concurrent_chunks,False)
+                new_file, status = request_new_pdf_data(start_code, end_code, records_per_chunk, concurrent_chunks,False)
+                if not new_file:
+                    self.status_text_territorial.set(f"Status: {status}")
+                    return
                 #movendo o arquivo para o path desejado
                 #1 pegar o nome do arquivo
                 name_file = 'PDF' + os.path.basename(new_file)
@@ -290,15 +340,20 @@ class Interface:
                 new_path = os.path.join(base_path_pdf, name_file)
                 check_if_exist(new_path)
                 os.rename(new_file, new_path)
-                print(f"Dados do PDF processados e salvos em {base_path_pdf}")
+                result = f"Dados do PDF processados e salvos em {base_path_pdf}"
+                self.status_text_territorial.set(f"Status: {result}")
         except Exception as e:
-            print(f"Erro: {e}")
+            result = f"Erro: {e}"
+            self.status_text_territorial.set(f"Status: {result}")
     def threaded_request_data_from_pdf(self):
+        self.status_text_territorial.set("Status: Processando dados da area territorial...")
         threading.Thread(target=self.request_data_from_pdf).start()
     def threaded_request_data_from_prefeitura(self):
+        self.status_prefeitura.set("Status: Processando dados da prefeitura...")
         threading.Thread(target=self.request_data_from_prefeitura).start()
 
     def threaded_request_data_from_dmae(self):
+        self.status_text_dmae.set("Status: Processando dados do DMAE...")
         threading.Thread(target=self.request_data_from_dmae).start()
 def check_if_exist(destination):
     if os.path.exists(destination):

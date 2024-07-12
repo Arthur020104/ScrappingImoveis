@@ -1,6 +1,6 @@
 import pandas as pd
-from .download import download_pdf  # Assumindo que você tem um módulo chamado download
-from .infoExtract import read_pdf, extract_info  # Assumindo que você tem esses módulos
+from .download import download_pdf 
+from .infoExtract import read_pdf, extract_info  
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 import os
