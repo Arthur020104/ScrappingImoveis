@@ -1,6 +1,6 @@
 # Interface de Processamento de Dados
 
-Este projeto consiste em uma interface gráfica desenvolvida para gerar fazer scrapping informações imobiliárias de Uberlândia.
+Este projeto consiste em uma interface gráfica desenvolvida para fazer scrapping de informações imobiliárias de Uberlândia.
 
 ## Funcionalidades
 
