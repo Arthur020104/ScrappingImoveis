@@ -389,7 +389,8 @@ def check_if_exist(destination):
 if __name__ == '__main__':
     root = tk.Tk()
     
-    img = Image.open("./Images/letter-g.png")
+    img_path = os.path.join(os.path.dirname(__file__), "Images/letter-g.png")
+    img = Image.open(img_path)
     photo = ImageTk.PhotoImage(img)
 
     root.iconphoto(True, photo)

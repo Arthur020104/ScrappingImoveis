@@ -7,3 +7,4 @@ streamlit
 geckodriver-autoinstaller
 PyPDF2
 pillow
+pyinstaller
