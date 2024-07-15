@@ -5,7 +5,7 @@ import time
 import tqdm
 import os
 
-def process_chunks(file_path: str, save_number: int, concurrent_chunks: int):
+def process_chunks(file_path: str, save_number: int, concurrent_chunks: int,receving_file:bool, complete_code_list:list):
     """
     Processa chunks de códigos de propriedades em paralelo.
 
@@ -13,21 +13,26 @@ def process_chunks(file_path: str, save_number: int, concurrent_chunks: int):
         file_path (str): Caminho para o arquivo CSV contendo os códigos de propriedade.
         save_number (int): Número de registros a serem salvos por chunk.
         concurrent_chunks (int): Número de chunks processados simultaneamente.
+        receving_file (bool): Se a função está recebendo um arquivo ou não.
+        complete_code_list (list): Lista com todos os códigos completos. Só é necessário se receving_file=True.
     Returns:
         combined_output.csv: Arquivo CSV combinado contendo todos os resultados.(PATH)
     """
     start_time = time.time()
-
+    unique_codigos_from_file = []
     # Lê os códigos únicos do arquivo CSV
-    df = pd.read_csv(file_path)
-    unique_codigos_from_file = df["codigo_completo"].unique()
+    if receving_file:
+        df = pd.read_csv(file_path)
+        unique_codigos_from_file = df["codigo_completo"].unique()
 
-    # Limpa os dados para a consulta
-    cleaned_codes = [
-        str(code).replace(".", "").replace(" ", "").replace("-", "").replace("IMO:", "")
-        for code in unique_codigos_from_file
-    ]
-    unique_codigos_from_file = cleaned_codes
+        # Limpa os dados para a consulta
+        cleaned_codes = [
+            str(code).replace(".", "").replace(" ", "").replace("-", "").replace("IMO:", "")
+            for code in unique_codigos_from_file
+        ]
+        unique_codigos_from_file = cleaned_codes
+    else:
+        unique_codigos_from_file = complete_code_list
     #print(f"Number of unique codes: {len(unique_codigos_from_file)}")
 
     # Calcula o tamanho desejado dos chunks
