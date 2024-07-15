@@ -7,7 +7,7 @@ script_dir = os.path.dirname(__file__)
 arr_keys = ['Insc_Cadastral', 'Imovel_Endereco', 'Bairro', 'Quadra', 'Lote', 'Area Territorial',
                         'Area Predial', 'Testada', 'Cod_Prefeitura', 'Contribuinte_CPF', 'Contribuinte_Nome',
                         'Contribuinte_Endereco', 'Contribuinte_CEP', 'Bairro_Contribuinte']
-def request_new_dmae_data(start_code: int, end_code: int, records_per_chunk: int, concurrent_chunks: int, delete_file=True):
+def request_new_dmae_data(start_code: int, end_code: int, records_per_chunk: int, concurrent_chunks: int,receving_list:bool = False, complete_code_list:list = [], delete_file=True):
     """
     Processa e compara dados novos com dados existentes, atualizando e 
     acrescentando conforme necessário.
@@ -24,11 +24,14 @@ def request_new_dmae_data(start_code: int, end_code: int, records_per_chunk: int
     """
     try:
         # Processa e obtém os novos dados da prefeitura e do DMAE
-        new_file_pref_cod, status = request_new_prefeitura_data(start_code=start_code, end_code=end_code, records_per_chunk=records_per_chunk, concurrent_chunks=concurrent_chunks, delete_file=False)
-        if not new_file_pref_cod:
-            return None, status
-        new_file = process_dmae_chunks(file_path=new_file_pref_cod, save_number=records_per_chunk, concurrent_chunks=concurrent_chunks)
+        new_file_pref_cod = ''
+        if not receving_list:
+            new_file_pref_cod, status = request_new_prefeitura_data(start_code=start_code, end_code=end_code, records_per_chunk=records_per_chunk, concurrent_chunks=concurrent_chunks, delete_file=False)
+            if not new_file_pref_cod:
+                return None, status
+        new_file = process_dmae_chunks(file_path=new_file_pref_cod,save_number=records_per_chunk,concurrent_chunks=concurrent_chunks, receving_file=(not receving_list),complete_code_list=complete_code_list)
         new_data = pd.read_csv(new_file)
+        
         
         # Lê os dados atuais do arquivo CSV existente
         current_data_path = os.path.join(script_dir, '..', 'BaseDeDados', 'Informacao_baseada_em_codigo_completo', 'Base.csv')
@@ -52,7 +55,8 @@ def request_new_dmae_data(start_code: int, end_code: int, records_per_chunk: int
 
         # Salva o DataFrame atualizado de volta no arquivo CSV
         concatenated_df.to_csv(current_data_path, index=False)
-        os.remove(new_file_pref_cod)# Remove o arquivo temporário da prefeitura
+        if new_file_pref_cod != '':
+            os.remove(new_file_pref_cod)  # Remove o arquivo temporário da prefeitura
         if(delete_file):
             os.remove(new_file)
             return None
