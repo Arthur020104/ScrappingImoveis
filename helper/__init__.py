@@ -2,4 +2,5 @@
 
 from . import dmae
 from . import prefeitura
-#from . import territorial
+from . import territorial
+from . import partes
