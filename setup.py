@@ -4,6 +4,7 @@ import sys
 import platform
 import subprocess
 import tempfile
+
 # Função para criar um arquivo Python que executa o Interface.py
 def create_launcher():
     interface_path = os.path.abspath("Interface.py")
@@ -14,14 +15,17 @@ def create_launcher():
 
 # Função para compilar o código em um executável
 def compile_to_exe():
+    icon_path = os.path.join(os.path.dirname(__file__), "Images", "letter-g.png")
     subprocess.check_call([
         sys.executable, "-m", "PyInstaller",
         "--onefile", 
+        f"--icon={icon_path}",
         "launcher.py"
     ])
-# credito https://sukhbinder.wordpress.com/2023/06/07/simple-python-script-to-create-a-desktop-shortcut/
+
+# Crédito https://sukhbinder.wordpress.com/2023/06/07/simple-python-script-to-create-a-desktop-shortcut/
 def create_windows_shortcut_on_desktop(name: str, targetpath: str ):
-    SCIPTFILE="""
+    SCIPTFILE = """
     Set oWS = WScript.CreateObject("WScript.Shell") 
     sLinkFile = "{name}"
     Set oLink = oWS.CreateShortcut(sLinkFile)
@@ -32,7 +36,7 @@ def create_windows_shortcut_on_desktop(name: str, targetpath: str ):
     with tempfile.TemporaryDirectory() as tmpdir:
         bat_file= os.path.join(tmpdir, "CreateShortcut.vbs")
         desktop_loc = os.path.join(os.environ['PUBLIC'], 'Desktop')
-        name_path = os.path.join(desktop_loc,"{}.lnk").format(name.upper())
+        name_path = os.path.join(desktop_loc, "{}.lnk").format(name.upper())
         with open(bat_file, "w") as fout:
             fout.write(SCIPTFILE.format(name=name_path, targetpath=targetpath))
         try:
@@ -48,7 +52,7 @@ def move_executable():
     src = os.path.join("dist", "launcher.exe" if platform.system() == "Windows" else "launcher")
     dst = os.path.dirname(__file__)
     shutil.move(src, dst)
-    create_windows_shortcut_on_desktop('ScrappingImoveis',os.path.join(dst,"launcher.exe"))
+    create_windows_shortcut_on_desktop('ScrappingImoveis', os.path.join(dst, "launcher.exe"))
 
 # Função para remover a pasta build e o arquivo launcher.py
 def cleanup():
