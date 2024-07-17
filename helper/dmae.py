@@ -59,7 +59,7 @@ def request_new_dmae_data(start_code: int, end_code: int, records_per_chunk: int
             os.remove(new_file_pref_cod)  # Remove o arquivo temporário da prefeitura
         if(delete_file):
             os.remove(new_file)
-            return None
+            return None, f"Base de dados atualizada com sucesso e arquivo deletado."
         else:
             return new_file, f"Dados processado e salvos em "
     except Exception as e:
