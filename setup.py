@@ -27,30 +27,14 @@ os.system(r'python "{interface_path}"')
 # Função para compilar o código em um executável
 def compile_to_exe():
     icon_path = os.path.join(os.path.dirname(__file__), "Images", "letter-g.png")
-    # Gera o arquivo .spec
+    # Compila diretamente com PyInstaller usando a opção --uac-admin
     subprocess.check_call([
         sys.executable, "-m", "PyInstaller",
         "--onefile",
         f"--icon={icon_path}",
-        "--name=launcher",
+        "--uac-admin",  # Solicitar permissões de administrador
         "launcher.py"
     ])
-    # Modifica o arquivo .spec para incluir o manifesto
-    spec_file = "launcher.spec"
-    with open(spec_file, "r", encoding="utf-8") as file:
-        spec_content = file.readlines()
-    
-    # Adiciona o manifesto ao arquivo .spec
-    for i, line in enumerate(spec_content):
-        if line.strip().startswith("exe = EXE("):
-            spec_content.insert(i + 1, "    manifest='admin.manifest',\n")
-            break
-    
-    with open(spec_file, "w", encoding="utf-8") as file:
-        file.writelines(spec_content)
-    
-    # Compila usando o arquivo .spec modificado
-    subprocess.check_call([sys.executable, "-m", "PyInstaller", spec_file])
 
 # Crédito https://sukhbinder.wordpress.com/2023/06/07/simple-python-script-to-create-a-desktop-shortcut/
 def create_windows_shortcut_on_desktop(name: str, targetpath: str ):
@@ -93,14 +77,11 @@ def move_executable():
 def cleanup():
     build_path = os.path.join(os.getcwd(), "build")
     dist_path = os.path.join(os.getcwd(), "dist")
-    launcher_path = os.path.join(os.getcwd(), "launcher.spec")
 
     if os.path.exists(build_path):
         shutil.rmtree(build_path)
     if os.path.exists(dist_path):
         shutil.rmtree(dist_path)
-    if os.path.exists(launcher_path):
-        os.remove(launcher_path)
     if os.path.exists("launcher.py"):
         os.remove("launcher.py")
 
