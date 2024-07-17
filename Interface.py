@@ -188,7 +188,7 @@ class Interface:
                 print(result)
             else:
                 base_path_dmae = self.entry_base_path_dmae.get()
-                new_file, status = request_new_dmae_data(start_code, end_code, records_per_chunk, concurrent_chunks,False)
+                new_file, status = request_new_dmae_data(start_code, end_code, records_per_chunk, concurrent_chunks,False, delete_file=False)
                 if not new_file:
                     #atualiza o textfield de status com a mensagem de erro
                     self.status_text_dmae.set(f"Status: {status}")
@@ -208,7 +208,7 @@ class Interface:
             result = f"Erro processando os dados do DMAE: {e}"
             print(result)
             self.status_text_dmae.set(f"Status: {result}")
-            #atualiza o textfield de status com a mensagem de erro
+           # atualiza o textfield de status com a mensagem de erro
             return
     def setup_tab2(self):
         title2 = ttk.Label(self.tab2, text="Interface - Dmae", font=('Arial', 24))
